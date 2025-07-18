@@ -6,8 +6,8 @@ This is a React-based wedding invitation website for Laura & Alex's wedding. The
 ## Architecture & Key Components
 
 ### Core Structure
-- **Single-page React app** with conditional rendering for cover, details, RSVP form, and success confirmation
-- **State-driven UI**: Four main states - cover view, details view, form view, and success confirmation
+- **Single-page React app** with scroll-based navigation between sections
+- **Three main sections**: Cover (full-screen), Details, and RSVP form with smooth scroll
 - **Component hierarchy**: `App.tsx` → `WeddingInvitation.tsx` (main component with all logic)
 
 ### Tech Stack Specifics
@@ -19,8 +19,8 @@ This is a React-based wedding invitation website for Laura & Alex's wedding. The
 ## Development Patterns
 
 ### Component Design
-- **Monolithic component**: `WeddingInvitation.tsx` handles all state and UI logic (520+ lines)
-- **Conditional rendering**: Uses nested conditional pattern for multi-view navigation
+- **Monolithic component**: `WeddingInvitation.tsx` handles all state and UI logic (500+ lines)
+- **Section-based layout**: Three main sections with `id` attributes for smooth scrolling
 - **TypeScript interfaces**: Well-defined types for `Guest`, `FormData` with specific string literals for `busService`
 - **Responsive design**: Uses Tailwind's responsive utilities (`md:grid-cols-2`, etc.) for layout
 ### Styling Conventions
@@ -38,9 +38,8 @@ const [formData, setFormData] = useState<FormData>({
   busService: 'none' | 'roundtrip' | 'oneway-there' | 'oneway-back'
 });
 
-// Navigation state
+// Form state
 const [showForm, setShowForm] = useState(false);
-const [showDetails, setShowDetails] = useState(false);
 
 // Audio control state
 const [isPlaying, setIsPlaying] = useState(false);
@@ -62,7 +61,7 @@ const audioRef = useRef<HTMLAudioElement>(null);
 ### Form Validation & UX
 - **Required fields**: Only name and lastName are required
 - **Conditional sections**: Bus service and dietary restrictions only show if attending
-- **Multi-step UX**: Cover → Details → Form → Success confirmation with back navigation
+- **Smooth scroll UX**: Cover → Details → Form → Success confirmation with smooth scroll navigation
 
 ### Asset References
 - **Cover image**: `/portada.jpg` for full-screen background in cover view
@@ -87,7 +86,7 @@ npm run lint    # ESLint with TypeScript rules
 ## Project-Specific Guidelines
 
 ### When Adding Features
-- Maintain the four-state pattern (cover/details/form/success)
+- Maintain the three-section pattern (cover/details/form)
 - Use the established color palette and glass morphism styling
 - Follow the immutable state update patterns for form data
 - Add new icons from `lucide-react` library
