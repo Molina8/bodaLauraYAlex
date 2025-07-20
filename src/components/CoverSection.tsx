@@ -1,13 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { Heart, ChevronDown, Play, Pause } from 'lucide-react';
+import { Heart, ChevronDown } from 'lucide-react';
 
 interface CoverSectionProps {
-  isPlaying: boolean;
-  toggleMusic: () => void;
   scrollToSection: (sectionId: string) => void;
 }
 
-const CoverSection: React.FC<CoverSectionProps> = ({ isPlaying, toggleMusic, scrollToSection }) => {
+const CoverSection: React.FC<CoverSectionProps> = ({ scrollToSection }) => {
   const [floatingHearts, setFloatingHearts] = useState<Array<{id: number, left: number, delay: number}>>([]);
 
   // Generar corazones flotantes
@@ -16,7 +14,7 @@ const CoverSection: React.FC<CoverSectionProps> = ({ isPlaying, toggleMusic, scr
       const newHeart = {
         id: Date.now() + Math.random(),
         left: Math.random() * 100,
-        delay: Math.random() * 2
+        delay: Math.random() * 1
       };
       setFloatingHearts(prev => [...prev, newHeart]);
 
@@ -26,15 +24,20 @@ const CoverSection: React.FC<CoverSectionProps> = ({ isPlaying, toggleMusic, scr
       }, 8000);
     };
 
-    const interval = setInterval(generateHeart, 3000);
+    // Generar algunos corazones iniciales
+    for (let i = 0; i < 3; i++) {
+      setTimeout(() => generateHeart(), i * 1000);
+    }
+
+    const interval = setInterval(generateHeart, 2000);
     return () => clearInterval(interval);
   }, []);
 
   return (
     <section id="cover" className="min-h-screen relative overflow-hidden">
-      {/* Imagen de fondo en pantalla completa */}
+      {/* Imagen de fondo en pantalla completa - Mobile */}
       <div 
-        className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+        className="absolute inset-0 bg-cover bg-center bg-no-repeat md:hidden"
         style={{
           backgroundImage: 'url(/portada.jpeg)',
         }}
@@ -43,20 +46,56 @@ const CoverSection: React.FC<CoverSectionProps> = ({ isPlaying, toggleMusic, scr
         <div className="absolute inset-0 bg-black/20"></div>
       </div>
 
-      {/* Corazones flotantes */}
+      {/* Imagen de fondo en pantalla completa - Desktop */}
+      <div 
+        className="absolute inset-0 bg-cover bg-center bg-no-repeat hidden md:block"
+        style={{
+          backgroundImage: 'url(/portada-pc.jpeg)',
+        }}
+      >
+        {/* Overlay para mejorar la legibilidad del texto */}
+        <div className="absolute inset-0 bg-black/20"></div>
+      </div>
+
+      {/* Corazones flotantes dinámicos */}
       {floatingHearts.map((heart) => (
         <div
           key={heart.id}
-          className="absolute animate-float-up pointer-events-none z-5"
+          className="absolute animate-float-hearts pointer-events-none z-5"
           style={{
             left: `${heart.left}%`,
             animationDelay: `${heart.delay}s`,
-            bottom: '-50px'
+            bottom: '0px'
           }}
         >
           <Heart className="w-6 h-6 text-white/60 fill-white/40" />
         </div>
       ))}
+
+      {/* Corazones flotantes estáticos decorativos */}
+      <div className="absolute inset-0 pointer-events-none overflow-hidden">
+        <div className="absolute top-20 left-10 opacity-20">
+          <Heart className="w-4 h-4 text-white/80 fill-white/60 animate-float-hearts" style={{ animationDelay: '0s' }} />
+        </div>
+        <div className="absolute top-32 right-16 opacity-15">
+          <Heart className="w-3 h-3 text-white/70 fill-white/50 animate-float-hearts" style={{ animationDelay: '2s' }} />
+        </div>
+        <div className="absolute top-48 left-20 opacity-10">
+          <Heart className="w-5 h-5 text-white/60 fill-white/40 animate-float-hearts" style={{ animationDelay: '4s' }} />
+        </div>
+        <div className="absolute bottom-32 right-10 opacity-20">
+          <Heart className="w-4 h-4 text-rose-200/60 fill-rose-200/40 animate-float-hearts" style={{ animationDelay: '1s' }} />
+        </div>
+        <div className="absolute bottom-48 left-16 opacity-15">
+          <Heart className="w-3 h-3 text-rose-300/50 fill-rose-300/30 animate-float-hearts" style={{ animationDelay: '3s' }} />
+        </div>
+        <div className="absolute top-1/2 right-1/4 opacity-10">
+          <Heart className="w-6 h-6 text-white/40 fill-white/20 animate-float-hearts" style={{ animationDelay: '5s' }} />
+        </div>
+        <div className="absolute top-1/3 left-1/4 opacity-15">
+          <Heart className="w-4 h-4 text-rose-100/60 fill-rose-100/40 animate-float-hearts" style={{ animationDelay: '6s' }} />
+        </div>
+      </div>
 
       {/* Contenido superpuesto */}
       <div className="relative z-10 min-h-screen flex items-center justify-center p-4">
@@ -83,7 +122,7 @@ const CoverSection: React.FC<CoverSectionProps> = ({ isPlaying, toggleMusic, scr
 
           {/* Fecha de la boda */}
           <div className="mb-12">
-            <p className="text-xl md:text-2xl font-light tracking-wide text-rose-200">
+            <p className="text-xl md:text-2xl font-light tracking-wide text-rose-200 mb-6">
               18 de Octubre, 2025
             </p>
           </div>
@@ -98,20 +137,6 @@ const CoverSection: React.FC<CoverSectionProps> = ({ isPlaying, toggleMusic, scr
             </button>
           </div>
         </div>
-      </div>
-
-      {/* Botón de música */}
-      <div className="absolute bottom-6 right-6 z-20">
-        <button 
-          onClick={toggleMusic}
-          className="bg-white/80 backdrop-blur-sm rounded-full p-3 shadow-lg hover:bg-white/90 transition-all duration-300 transform hover:scale-105"
-        >
-          {isPlaying ? (
-            <Pause className="w-5 h-5 text-rose-400" />
-          ) : (
-            <Play className="w-5 h-5 text-rose-400" />
-          )}
-        </button>
       </div>
     </section>
   );

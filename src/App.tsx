@@ -1,9 +1,15 @@
-import React from 'react';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import WeddingInvitation from './components/WeddingInvitation';
+import ProtectedRoute from './components/ProtectedRoute';
 
 function App() {
   return (
-    <WeddingInvitation />
+    <Router>
+      <Routes>
+        <Route path="/" element={<WeddingInvitation />} />
+        <Route path="/admin" element={<ProtectedRoute />} />
+      </Routes>
+    </Router>
   );
 }
 

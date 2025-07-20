@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Heart, MapPin, Clock, Users, Music, Sparkles, ExternalLink, Hotel, Bus, X, Star, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Heart, MapPin, Clock, Users, Music, Sparkles, ExternalLink, Hotel, Bus, X, Star, ChevronLeft, ChevronRight, Gift, Calendar, Info } from 'lucide-react';
 
 interface DetailsSectionProps {
   scrollToSection: (sectionId: string) => void;
@@ -8,7 +8,20 @@ interface DetailsSectionProps {
 const DetailsSection: React.FC<DetailsSectionProps> = ({ scrollToSection }) => {
   const [showHotelsModal, setShowHotelsModal] = useState(false);
   const [showBusModal, setShowBusModal] = useState(false);
+  const [showGiftsModal, setShowGiftsModal] = useState(false);
+  const [showTipsModal, setShowTipsModal] = useState(false);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
+
+  // Función para generar enlace de Google Calendar
+  const generateCalendarLink = () => {
+    const startDate = '20251018T103000Z'; // 18 Oct 2025, 12:30 (converted to UTC)
+    const endDate = '20251019T020000Z';   // 19 Oct 2025, 04:00 (estimated end time)
+    const title = encodeURIComponent('Boda de Laura & Alex');
+    const details = encodeURIComponent('Ceremonia: Convento de San Esteban, Cehegín (12:30)\nCelebración: Salones Cristi, Caravaca de la Cruz');
+    const location = encodeURIComponent('Convento de San Esteban, Cehegín');
+    
+    return `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${title}&dates=${startDate}/${endDate}&details=${details}&location=${location}`;
+  };
 
   // Array de imágenes del carrusel
   const carouselImages = [
@@ -54,7 +67,20 @@ const DetailsSection: React.FC<DetailsSectionProps> = ({ scrollToSection }) => {
             <Heart className="w-6 h-6" />
             <div className="h-px bg-rose-300 w-16"></div>
           </div>
-          <p className="text-xl text-gray-600 font-light">18 de Octubre, 2025</p>
+          <p className="text-xl text-gray-600 font-light mb-4">18 de Octubre, 2025</p>
+          
+          {/* Botón Agendar */}
+          <div className="flex justify-center">
+            <a
+              href={generateCalendarLink()}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 bg-rose-100 hover:bg-rose-200 text-rose-700 px-6 py-3 rounded-full transition-all duration-300 group shadow-md hover:shadow-lg"
+            >
+              <Calendar className="w-5 h-5 group-hover:scale-110 transition-transform" />
+              <span className="font-medium">Agendar</span>
+            </a>
+          </div>
         </div>
 
         {/* Mensaje personal */}
@@ -68,11 +94,11 @@ const DetailsSection: React.FC<DetailsSectionProps> = ({ scrollToSection }) => {
         {/* Carrusel de fotos */}
         <div className="mb-12">
           <div className="relative max-w-3xl mx-auto">
-            <div className="relative h-64 md:h-96 rounded-2xl overflow-hidden shadow-2xl">
+            <div className="relative h-80 md:h-96 rounded-2xl overflow-hidden shadow-2xl">
               <img
                 src={carouselImages[currentImageIndex]}
                 alt={`Foto ${currentImageIndex + 1}`}
-                className="w-full h-full object-cover transition-all duration-500"
+                className="w-full h-full object-cover transition-all duration-500 min-h-80 md:min-h-96"
               />
               
               {/* Botones de navegación */}
@@ -169,43 +195,75 @@ const DetailsSection: React.FC<DetailsSectionProps> = ({ scrollToSection }) => {
           </div>
         </div>
 
-        {/* Información adicional - Hoteles y Autobús */}
-        <div className="grid md:grid-cols-2 gap-8 mb-12">
+        {/* Información adicional - Hoteles, Autobús, Regalos y Tips */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6 mb-12">
           {/* Hoteles */}
-          <div className="bg-white/60 backdrop-blur-sm rounded-2xl p-6 shadow-lg hover:shadow-xl transition-shadow cursor-pointer" onClick={() => setShowHotelsModal(true)}>
-            <div className="flex items-center justify-center mb-4">
-              <div className="bg-amber-100 p-3 rounded-full">
-                <Hotel className="w-6 h-6 text-amber-600" />
+          <div className="bg-white/60 backdrop-blur-sm rounded-2xl p-4 md:p-6 shadow-lg hover:shadow-xl transition-shadow cursor-pointer" onClick={() => setShowHotelsModal(true)}>
+            <div className="flex items-center justify-center mb-3 md:mb-4">
+              <div className="bg-amber-100 p-2 md:p-3 rounded-full">
+                <Hotel className="w-5 h-5 md:w-6 md:h-6 text-amber-600" />
               </div>
             </div>
-            <h3 className="text-xl font-serif text-gray-800 mb-3 text-center">Hoteles</h3>
-            <div className="flex justify-center mb-3">
+            <h3 className="text-lg md:text-xl font-serif text-gray-800 mb-2 md:mb-3 text-center">Hoteles</h3>
+            <div className="flex justify-center mb-2 md:mb-3">
               <div className="flex gap-1">
-                <Star className="w-4 h-4 text-amber-400 fill-current" />
-                <Star className="w-4 h-4 text-amber-400 fill-current" />
-                <Star className="w-4 h-4 text-amber-400 fill-current" />
+                <Star className="w-3 h-3 md:w-4 md:h-4 text-amber-400 fill-current" />
+                <Star className="w-3 h-3 md:w-4 md:h-4 text-amber-400 fill-current" />
+                <Star className="w-3 h-3 md:w-4 md:h-4 text-amber-400 fill-current" />
               </div>
             </div>
-            <p className="text-gray-600 text-center text-sm mb-4">¿Necesitas alojamiento?</p>
+            <p className="text-gray-600 text-center text-xs md:text-sm mb-3 md:mb-4">¿Necesitas alojamiento?</p>
             <div className="text-center">
-              <button className="bg-amber-100 hover:bg-amber-200 text-amber-700 px-4 py-2 rounded-full text-sm transition-colors">
+              <button className="bg-amber-100 hover:bg-amber-200 text-amber-700 px-3 md:px-4 py-1.5 md:py-2 rounded-full text-xs md:text-sm transition-colors">
                 VER MÁS
               </button>
             </div>
           </div>
 
           {/* Autobús */}
-          <div className="bg-white/60 backdrop-blur-sm rounded-2xl p-6 shadow-lg hover:shadow-xl transition-shadow cursor-pointer" onClick={() => setShowBusModal(true)}>
-            <div className="flex items-center justify-center mb-4">
-              <div className="bg-blue-100 p-3 rounded-full">
-                <Bus className="w-6 h-6 text-blue-600" />
+          <div className="bg-white/60 backdrop-blur-sm rounded-2xl p-4 md:p-6 shadow-lg hover:shadow-xl transition-shadow cursor-pointer" onClick={() => setShowBusModal(true)}>
+            <div className="flex items-center justify-center mb-3 md:mb-4">
+              <div className="bg-blue-100 p-2 md:p-3 rounded-full">
+                <Bus className="w-5 h-5 md:w-6 md:h-6 text-blue-600" />
               </div>
             </div>
-            <h3 className="text-xl font-serif text-gray-800 mb-3 text-center">Autobús</h3>
-            <p className="text-gray-600 text-center text-sm mb-4">Conoce todos los detalles sobre el autobús</p>
+            <h3 className="text-lg md:text-xl font-serif text-gray-800 mb-2 md:mb-3 text-center">Autobús</h3>
+            <p className="text-gray-600 text-center text-xs md:text-sm mb-3 md:mb-4">Conoce todos los detalles sobre el autobús</p>
             <div className="text-center">
-              <button className="bg-blue-100 hover:bg-blue-200 text-blue-700 px-4 py-2 rounded-full text-sm transition-colors">
+              <button className="bg-blue-100 hover:bg-blue-200 text-blue-700 px-3 md:px-4 py-1.5 md:py-2 rounded-full text-xs md:text-sm transition-colors">
                 + INFO
+              </button>
+            </div>
+          </div>
+
+          {/* Regalos */}
+          <div className="bg-white/60 backdrop-blur-sm rounded-2xl p-4 md:p-6 shadow-lg hover:shadow-xl transition-shadow cursor-pointer" onClick={() => setShowGiftsModal(true)}>
+            <div className="flex items-center justify-center mb-3 md:mb-4">
+              <div className="bg-rose-100 p-2 md:p-3 rounded-full">
+                <Gift className="w-5 h-5 md:w-6 md:h-6 text-rose-600" />
+              </div>
+            </div>
+            <h3 className="text-lg md:text-xl font-serif text-gray-800 mb-2 md:mb-3 text-center">Regalos</h3>
+            <p className="text-gray-600 text-center text-xs md:text-sm mb-3 md:mb-4">Información sobre regalos</p>
+            <div className="text-center">
+              <button className="bg-rose-100 hover:bg-rose-200 text-rose-700 px-3 md:px-4 py-1.5 md:py-2 rounded-full text-xs md:text-sm transition-colors">
+                VER MÁS
+              </button>
+            </div>
+          </div>
+
+          {/* Tips y Notas */}
+          <div className="bg-white/60 backdrop-blur-sm rounded-2xl p-4 md:p-6 shadow-lg hover:shadow-xl transition-shadow cursor-pointer" onClick={() => setShowTipsModal(true)}>
+            <div className="flex items-center justify-center mb-3 md:mb-4">
+              <div className="bg-green-100 p-2 md:p-3 rounded-full">
+                <Info className="w-5 h-5 md:w-6 md:h-6 text-green-600" />
+              </div>
+            </div>
+            <h3 className="text-lg md:text-xl font-serif text-gray-800 mb-2 md:mb-3 text-center">Tips & Notas</h3>
+            <p className="text-gray-600 text-center text-xs md:text-sm mb-3 md:mb-4">Información importante</p>
+            <div className="text-center">
+              <button className="bg-green-100 hover:bg-green-200 text-green-700 px-3 md:px-4 py-1.5 md:py-2 rounded-full text-xs md:text-sm transition-colors">
+                LEER MÁS
               </button>
             </div>
           </div>
@@ -308,12 +366,12 @@ const DetailsSection: React.FC<DetailsSectionProps> = ({ scrollToSection }) => {
                 <div className="bg-amber-50 rounded-xl p-4 border border-amber-200">
                   <h4 className="font-semibold text-gray-800 mb-2">Parador 10 Apartamentos</h4>
                   <a 
-                    href="https://parador10apartamentos.com"
+                    href="https://www.booking.com/searchresults.es.html?aid=311090&label=parador-10-apartamentos-w_0v6qXA2yUbZSSviMUhsAS704513628392%3Apl%3Ata%3Ap1%3Ap2%3Aac%3Aap%3Aneg%3Afi%3Atikwd-1930355773649%3Alp9218374%3Ali%3Adec%3Adm%3Appccp%3DUmFuZG9tSVYkc2RlIyh9YcGt_tphEo8pawEozW2KQ80&gclid=CjwKCAjwp_LDBhBCEiwAK7Fnku1ad8DxvLcZWPUYbCey31gWispTr21bSCF-dOJ1ykfoH7rXgFyVixoCyT0QAvD_BwE&highlighted_hotels=9143244&redirected=1&city=-377432&hlrd=no_dates&source=hotel&expand_sb=1&keep_landing=1&sid=8bad91c6199d815d6631f2af4f189467"
                     target="_blank"
                     rel="noopener noreferrer"
                     className="text-amber-600 hover:text-amber-700 underline flex items-center gap-1 transition-colors"
                   >
-                    parador10apartamentos.com
+                    Booking - Parador 10 Apartamentos
                     <ExternalLink className="w-3 h-3" />
                   </a>
                 </div>
@@ -372,6 +430,146 @@ const DetailsSection: React.FC<DetailsSectionProps> = ({ scrollToSection }) => {
                 <p className="text-rose-700 font-medium text-center">
                   ⚠️ Recuerda confirmar autobús cuando confirmes asistencia
                 </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Modal de Regalos */}
+      {showGiftsModal && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50" onClick={() => setShowGiftsModal(false)}>
+          <div className="bg-white rounded-2xl p-6 max-w-lg w-full max-h-[80vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
+            <div className="flex items-center justify-between mb-6">
+              <div className="flex items-center gap-3">
+                <div className="bg-rose-100 p-2 rounded-full">
+                  <Gift className="w-5 h-5 text-rose-600" />
+                </div>
+                <h3 className="text-2xl font-serif text-gray-800">Regalos</h3>
+              </div>
+              <button 
+                onClick={() => setShowGiftsModal(false)}
+                className="text-gray-400 hover:text-gray-600 transition-colors"
+              >
+                <X className="w-6 h-6" />
+              </button>
+            </div>
+            
+            <div className="space-y-6">
+              <div className="text-center space-y-4">
+                <p className="text-gray-700 text-lg leading-relaxed">
+                  Vuestra presencia es lo más importante.
+                </p>
+                
+                <p className="text-gray-700 leading-relaxed">
+                  Pero si deseáis hacernos un regalo, agradecemos de corazón cualquier aporte para seguir construyendo nuestro hogar y nuestros sueños.
+                </p>
+              </div>
+              
+              <div className="bg-rose-50 rounded-xl p-6 border border-rose-200">
+                <div className="text-center space-y-3">
+                  <h4 className="font-semibold text-gray-800 mb-4 flex items-center justify-center gap-2">
+                    <Heart className="w-4 h-4 text-rose-600" />
+                    Número de cuenta
+                    <Heart className="w-4 h-4 text-rose-600" />
+                  </h4>
+                  <div className="bg-white rounded-lg p-4 font-mono text-lg font-semibold text-gray-800 tracking-wider border border-rose-300">
+                    ES68 2100 8226 1713 0022 3360
+                  </div>
+                  <button 
+                    onClick={() => navigator.clipboard.writeText('ES68 2100 8226 1713 0022 3360')}
+                    className="bg-rose-100 hover:bg-rose-200 text-rose-700 px-4 py-2 rounded-full text-sm transition-colors mt-3"
+                  >
+                    Copiar número de cuenta
+                  </button>
+                </div>
+              </div>
+              
+              <div className="text-center">
+                <p className="text-gray-600 italic text-sm">
+                  Con amor, Laura & Alex 💕
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Modal de Tips y Notas */}
+      {showTipsModal && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50" onClick={() => setShowTipsModal(false)}>
+          <div className="bg-white rounded-2xl p-6 max-w-lg w-full max-h-[80vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
+            <div className="flex items-center justify-between mb-6">
+              <div className="flex items-center gap-3">
+                <div className="bg-green-100 p-2 rounded-full">
+                  <Info className="w-5 h-5 text-green-600" />
+                </div>
+                <h3 className="text-2xl font-serif text-gray-800">Tips & Notas</h3>
+              </div>
+              <button 
+                onClick={() => setShowTipsModal(false)}
+                className="text-gray-400 hover:text-gray-600 transition-colors"
+              >
+                <X className="w-6 h-6" />
+              </button>
+            </div>
+            
+            <div className="space-y-6">
+              <div className="bg-green-50 rounded-xl p-4 border border-green-200">
+                <div className="flex items-center gap-2 mb-3">
+                  <Clock className="w-4 h-4 text-green-600" />
+                  <h4 className="font-semibold text-gray-800">Puntualidad</h4>
+                </div>
+                <p className="text-gray-700">
+                  Por favor sed puntuales
+                </p>
+              </div>
+              
+              <div className="bg-green-50 rounded-xl p-4 border border-green-200">
+                <div className="flex items-center gap-2 mb-3">
+                  <Calendar className="w-4 h-4 text-green-600" />
+                  <h4 className="font-semibold text-gray-800">Confirmación</h4>
+                </div>
+                <p className="text-gray-700">
+                  Confirmad asistencia antes del <strong>22.09.2025</strong>
+                </p>
+              </div>
+              
+              <div className="bg-green-50 rounded-xl p-4 border border-green-200">
+                <div className="flex items-center gap-2 mb-3">
+                  <Users className="w-4 h-4 text-green-600" />
+                  <h4 className="font-semibold text-gray-800">Contacto</h4>
+                </div>
+                <p className="text-gray-700 mb-3">
+                  Para cualquier consulta, nuestros móviles son:
+                </p>
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between bg-white rounded-lg p-3 border border-green-300">
+                    <div>
+                      <p className="font-medium text-gray-800">Laura</p>
+                      <p className="text-green-600 font-mono">636 440 766</p>
+                    </div>
+                    <button 
+                      onClick={() => window.open('tel:636440766')}
+                      className="bg-green-100 hover:bg-green-200 text-green-700 px-3 py-1 rounded-full text-sm transition-colors"
+                    >
+                      Llamar
+                    </button>
+                  </div>
+                  
+                  <div className="flex items-center justify-between bg-white rounded-lg p-3 border border-green-300">
+                    <div>
+                      <p className="font-medium text-gray-800">Alex</p>
+                      <p className="text-green-600 font-mono">615 406 069</p>
+                    </div>
+                    <button 
+                      onClick={() => window.open('tel:615406069')}
+                      className="bg-green-100 hover:bg-green-200 text-green-700 px-3 py-1 rounded-full text-sm transition-colors"
+                    >
+                      Llamar
+                    </button>
+                  </div>
+                </div>
               </div>
             </div>
           </div>

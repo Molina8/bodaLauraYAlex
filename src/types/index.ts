@@ -10,7 +10,9 @@ export interface FormData {
   lastName: string;
   willAttend: boolean;
   dietaryRestrictions: string;
-  guests: Guest[];
+  hasCompanion: boolean;
+  companion?: Guest;
+  numberOfChildren: number;
   busService: 'none' | 'roundtrip' | 'oneway-there' | 'oneway-back';
   songSuggestion: string;
 }

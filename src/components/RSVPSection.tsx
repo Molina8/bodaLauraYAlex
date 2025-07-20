@@ -1,39 +1,25 @@
 import React from 'react';
-import { Heart, Utensils, Users, Bus, Music } from 'lucide-react';
-
-interface Guest {
-  id: string;
-  name: string;
-  lastName: string;
-  dietaryRestrictions: string;
-}
-
-interface FormData {
-  name: string;
-  lastName: string;
-  willAttend: boolean;
-  dietaryRestrictions: string;
-  guests: Guest[];
-  busService: 'none' | 'roundtrip' | 'oneway-there' | 'oneway-back';
-  songSuggestion: string;
-}
+import { Heart, Utensils, Users, Bus, Music, Baby } from 'lucide-react';
+import { FormData, Guest } from '../types';
 
 interface RSVPSectionProps {
   formData: FormData;
   setFormData: React.Dispatch<React.SetStateAction<FormData>>;
   handleSubmit: (e: React.FormEvent) => void;
-  addGuest: () => void;
-  removeGuest: (id: string) => void;
-  updateGuest: (id: string, field: keyof Guest, value: string) => void;
+  toggleCompanion: () => void;
+  updateCompanion: (field: keyof Guest, value: string) => void;
+  isSubmitting?: boolean;
+  submitError?: string | null;
 }
 
 const RSVPSection: React.FC<RSVPSectionProps> = ({
   formData,
   setFormData,
   handleSubmit,
-  addGuest,
-  removeGuest,
-  updateGuest,
+  toggleCompanion,
+  updateCompanion,
+  isSubmitting = false,
+  submitError = null,
 }) => {
   return (
     <section id="rsvp" className="min-h-screen flex items-center justify-center p-4 py-20">
@@ -136,59 +122,69 @@ const RSVPSection: React.FC<RSVPSectionProps> = ({
                 />
               </div>
 
-              {/* Acompañantes */}
+              {/* Acompañante */}
               <div>
                 <div className="flex items-center justify-between mb-4">
                   <label className="block text-sm font-medium text-gray-700">
                     <Users className="w-4 h-4 inline mr-1" />
-                    Acompañantes
+                    ¿Vienes con acompañante?
                   </label>
-                  <button
-                    type="button"
-                    onClick={addGuest}
-                    className="bg-rose-200 hover:bg-rose-300 text-rose-700 px-4 py-2 rounded-lg text-sm transition-colors"
-                  >
-                    + Añadir acompañante
-                  </button>
+                  <label className="relative inline-flex items-center cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={formData.hasCompanion}
+                      onChange={toggleCompanion}
+                      className="sr-only peer"
+                    />
+                    <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-rose-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-rose-400"></div>
+                  </label>
                 </div>
 
-                {formData.guests.map((guest, index) => (
-                  <div key={guest.id} className="bg-gray-50 rounded-xl p-4 mb-4">
-                    <div className="flex items-center justify-between mb-3">
-                      <h4 className="font-medium text-gray-700">Acompañante {index + 1}</h4>
-                      <button
-                        type="button"
-                        onClick={() => removeGuest(guest.id)}
-                        className="text-red-500 hover:text-red-700 text-sm"
-                      >
-                        Eliminar
-                      </button>
-                    </div>
+                {formData.hasCompanion && formData.companion && (
+                  <div className="bg-gray-50 rounded-xl p-4 mb-4">
+                    <h4 className="font-medium text-gray-700 mb-3">Datos del acompañante</h4>
                     <div className="grid md:grid-cols-2 gap-3 mb-3">
                       <input
                         type="text"
                         placeholder="Nombre"
-                        value={guest.name}
-                        onChange={(e) => updateGuest(guest.id, 'name', e.target.value)}
+                        value={formData.companion.name}
+                        onChange={(e) => updateCompanion('name', e.target.value)}
                         className="px-3 py-2 rounded-lg border border-gray-200 focus:ring-2 focus:ring-rose-300 focus:border-transparent"
                       />
                       <input
                         type="text"
                         placeholder="Apellidos"
-                        value={guest.lastName}
-                        onChange={(e) => updateGuest(guest.id, 'lastName', e.target.value)}
+                        value={formData.companion.lastName}
+                        onChange={(e) => updateCompanion('lastName', e.target.value)}
                         className="px-3 py-2 rounded-lg border border-gray-200 focus:ring-2 focus:ring-rose-300 focus:border-transparent"
                       />
                     </div>
                     <textarea
-                      placeholder="Restricciones alimentarias"
-                      value={guest.dietaryRestrictions}
-                      onChange={(e) => updateGuest(guest.id, 'dietaryRestrictions', e.target.value)}
+                      placeholder="Restricciones alimentarias del acompañante"
+                      value={formData.companion.dietaryRestrictions}
+                      onChange={(e) => updateCompanion('dietaryRestrictions', e.target.value)}
                       className="w-full px-3 py-2 rounded-lg border border-gray-200 focus:ring-2 focus:ring-rose-300 focus:border-transparent"
                       rows={2}
                     />
                   </div>
-                ))}
+                )}
+              </div>
+
+              {/* Número de niños */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <Baby className="w-4 h-4 inline mr-1" />
+                  En caso de asistir con niños, indica cuántos
+                </label>
+                <input
+                  type="number"
+                  min="0"
+                  max="10"
+                  value={formData.numberOfChildren}
+                  onChange={(e) => setFormData(prev => ({ ...prev, numberOfChildren: parseInt(e.target.value) }))}
+                  className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-rose-300 focus:border-transparent transition-all"
+                  placeholder="0"
+                />
               </div>
 
               {/* Servicio de autobús */}
@@ -247,13 +243,25 @@ const RSVPSection: React.FC<RSVPSectionProps> = ({
             </>
           )}
 
+          {/* Mensaje de error */}
+          {submitError && (
+            <div className="bg-red-50 border border-red-200 rounded-lg p-4">
+              <p className="text-red-700 text-sm">{submitError}</p>
+            </div>
+          )}
+
           {/* Botón de envío */}
           <div className="pt-6">
             <button
               type="submit"
-              className="w-full bg-gradient-to-r from-rose-300 to-pink-300 hover:from-rose-400 hover:to-pink-400 text-white py-3 rounded-xl transition-all duration-300 transform hover:scale-105"
+              disabled={isSubmitting}
+              className={`w-full py-3 rounded-xl transition-all duration-300 transform ${
+                isSubmitting
+                  ? 'bg-gray-300 cursor-not-allowed'
+                  : 'bg-gradient-to-r from-rose-300 to-pink-300 hover:from-rose-400 hover:to-pink-400 hover:scale-105'
+              } text-white`}
             >
-              Confirmar Asistencia
+              {isSubmitting ? 'Enviando...' : 'Confirmar Asistencia'}
             </button>
           </div>
         </form>
