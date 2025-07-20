@@ -26,7 +26,6 @@ const WeddingInvitation: React.FC = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [showWelcome, setShowWelcome] = useState(true);
-  const [musicEnabled, setMusicEnabled] = useState(false);
   const audioRef = useRef<HTMLAudioElement>(null);
 
   // Función para alternar play/pause
@@ -38,7 +37,6 @@ const WeddingInvitation: React.FC = () => {
         audio.pause();
         setIsPlaying(false);
       } else {
-        audio.currentTime = 0; // Reiniciar desde el principio
         audio.play().then(() => {
           setIsPlaying(true);
         }).catch((error) => {
@@ -51,7 +49,6 @@ const WeddingInvitation: React.FC = () => {
 
   // Funciones para manejar la entrada desde la pantalla de bienvenida
   const handleEnterWithMusic = async () => {
-    setMusicEnabled(true);
     setShowWelcome(false);
     
     // Reproducir música inmediatamente tras la interacción del usuario
@@ -76,9 +73,8 @@ const WeddingInvitation: React.FC = () => {
   };
 
   const handleEnterWithoutMusic = () => {
-    setMusicEnabled(false);
     setShowWelcome(false);
-    setIsPlaying(false);
+    setIsPlaying(false); // Solo no reproducir automáticamente
     
     // Scroll al inicio
     setTimeout(() => {
@@ -198,20 +194,18 @@ const WeddingInvitation: React.FC = () => {
       {/* Contenido principal */}
       {!showWelcome && (
         <>
-          {/* Botón de control de música - solo mostrar si la música está habilitada */}
-          {musicEnabled && (
-            <button
-              onClick={toggleMusic}
-              className="fixed bottom-6 right-6 z-50 bg-white/80 backdrop-blur-sm p-3 rounded-full shadow-lg hover:bg-white/90 transition-all duration-300 hover:scale-110"
-              aria-label={isPlaying ? 'Pausar música' : 'Reproducir música'}
-            >
-              {isPlaying ? (
-                <Pause className="w-6 h-6 text-rose-500" />
-              ) : (
-                <Play className="w-6 h-6 text-rose-500" />
-              )}
-            </button>
-          )}
+          {/* Botón de control de música - siempre visible */}
+          <button
+            onClick={toggleMusic}
+            className="fixed bottom-6 right-6 z-50 bg-white/80 backdrop-blur-sm p-3 rounded-full shadow-lg hover:bg-white/90 transition-all duration-300 hover:scale-110"
+            aria-label={isPlaying ? 'Pausar música' : 'Reproducir música'}
+          >
+            {isPlaying ? (
+              <Pause className="w-6 h-6 text-rose-500" />
+            ) : (
+              <Play className="w-6 h-6 text-rose-500" />
+            )}
+          </button>
 
           <CoverSection scrollToSection={scrollToSection} />
           <DetailsSection scrollToSection={scrollToSection} />
